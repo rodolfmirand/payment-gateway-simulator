@@ -1,0 +1,40 @@
+{
+  "source": "https://docs.pagar.me/reference/pix-2",
+  "title": "Request Pix  (Pedido)",
+  "example": {
+    "items": [
+      {
+        "amount": 2990,
+        "description": "Chaveiro do Tesseract",
+        "quantity": 1
+      }
+    ],
+    "customer": {
+      "name": "Tony Stark",
+      "email": "avengerstark@ligadajustica.com.br",
+      "type": "individual",
+      "document": "01234567890",
+      "phones": {
+        "home_phone": {
+          "country_code": "55",
+          "number": "22180513",
+          "area_code": "21"
+        }
+      }
+    },
+    "payments": [
+      {
+        "payment_method": "pix",
+        "pix": {
+          "expires_in": "52134613",
+          "additional_information": [
+            {
+              "name": "Quantidade",
+              "value": "2"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

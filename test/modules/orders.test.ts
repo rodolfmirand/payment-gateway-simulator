@@ -344,7 +344,7 @@ describe('validation (docs/pagarme/reference/erros-1.md)', () => {
     });
     expect(res.body.errors).toEqual({
       'order.payments[0].payment_method': [
-        "The payment_method field is invalid. Possible values are 'credit_card'.",
+        "The payment_method field is invalid. Possible values are 'credit_card', 'pix' or 'boleto'.",
       ],
     });
   });

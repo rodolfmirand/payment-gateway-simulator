@@ -1,0 +1,52 @@
+{
+  "source": "https://docs.pagar.me/reference/boleto-1",
+  "title": "Request boleto (Pedido)",
+  "example": {
+    "items": [
+      {
+        "amount": 2990,
+        "description": "Chaveiro do Tesseract",
+        "quantity": 1
+      }
+    ],
+    "customer": {
+      "name": "Tony Stark",
+      "email": "avengerstark@ligadajustica.com.br",
+      "document_type": "CPF",
+      "document": "93095135270",
+      "type": "Individual",
+      "address": {
+        "line_1": "375, Av. General Justo, Centro",
+        "line_2": "8º andar",
+        "zip_code": "20021130",
+        "city": "Rio de Janeiro",
+        "state": "RJ",
+        "country": "BR"
+      }
+    },
+    "shipping": {
+      "amount": 100,
+      "description": "Stark",
+      "recipient_name": "Tony Stark",
+      "recipient_phone": "24586787867",
+      "address": {
+        "line_1": "10880, Malibu Point, Malibu Central",
+        "zip_code": "90265",
+        "city": "Malibu",
+        "state": "CA",
+        "country": "US"
+      }
+    },
+    "payments": [
+      {
+        "payment_method": "boleto",
+        "boleto": {
+          "instructions": "Pagar até o vencimento",
+          "due_at": "2022-09-20T00:00:00Z",
+          "document_number": "123",
+          "type": "DM"
+        }
+      }
+    ]
+  }
+}

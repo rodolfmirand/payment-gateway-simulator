@@ -36,6 +36,15 @@ export function officialExample(method: string, path: string, status: string, na
   return example.value;
 }
 
+/**
+ * Example that the docs show only in the page text (not in the OpenAPI blocks), kept in
+ * test/fixtures/official/<name>.json because the downloaded pages are not versioned.
+ */
+export function officialFixture(name: string): any {
+  const path = fileURLToPath(new URL(`../fixtures/official/${name}.json`, import.meta.url));
+  return (JSON.parse(readFileSync(path, 'utf8')) as { example: unknown }).example;
+}
+
 function typeOf(value: unknown): string {
   if (value === null) return 'null';
   if (Array.isArray(value)) return 'array';

@@ -1,0 +1,107 @@
+{
+  "source": "https://docs.pagar.me/reference/cartao-de-credito-1",
+  "title": "Response Crédito (Basico)",
+  "example": {
+    "id": "or_DNobwn2CpGuvw0zp",
+    "code": "GP8KUL0B2D",
+    "amount": 2990,
+    "currency": "BRL",
+    "closed": true,
+    "items": [
+      {
+        "id": "oi_zd0pe0LRuEsBeQlg",
+        "type": "product",
+        "description": "Chaveiro do Tesseract",
+        "amount": 2990,
+        "quantity": 1,
+        "status": "active",
+        "created_at": "2023-03-03T19:49:14Z",
+        "updated_at": "2023-03-03T19:49:14Z"
+      }
+    ],
+    "customer": {
+      "id": "cus_NOjl9o0iPFr8wdQp",
+      "name": "Tony Stark",
+      "email": "avengerstark@ligadajustica.com.br",
+      "delinquent": false,
+      "created_at": "2023-03-03T19:38:58Z",
+      "updated_at": "2023-03-03T19:38:58Z",
+      "phones": {}
+    },
+    "status": "pending",
+    "created_at": "2023-03-03T19:49:14Z",
+    "updated_at": "2023-03-03T19:49:15Z",
+    "closed_at": "2023-03-03T19:49:14Z",
+    "charges": [
+      {
+        "id": "ch_p4lnAGyU0GT1E9MZ",
+        "code": "GP8KUL0B2D",
+        "amount": 2990,
+        "status": "pending",
+        "currency": "BRL",
+        "payment_method": "credit_card",
+        "funding_source": "prepaid",
+        "created_at": "2023-03-03T19:49:14Z",
+        "updated_at": "2023-03-03T19:49:15Z",
+        "customer": {
+          "id": "cus_NOjl9o0iPFr8wdQp",
+          "name": "Tony Stark",
+          "email": "avengerstark@ligadajustica.com.br",
+          "delinquent": false,
+          "created_at": "2023-03-03T19:38:58Z",
+          "updated_at": "2023-03-03T19:38:58Z",
+          "phones": {}
+        },
+        "last_transaction": {
+          "operation_key": "830608357",
+          "id": "tran_ywqNVaxiorcpde8W",
+          "transaction_type": "credit_card",
+          "gateway_id": "e98d2459-7b0e-43c1-b5e6-adea2c751427",
+          "amount": 2990,
+          "status": "authorized_pending_capture",
+          "success": true,
+          "installments": 1,
+          "funding_source": "prepaid",
+          "statement_descriptor": "AVENGERS",
+          "acquirer_name": "simulator",
+          "acquirer_tid": "806863466",
+          "acquirer_nsu": "66184",
+          "acquirer_auth_code": "890",
+          "acquirer_message": "Transação autorizada com sucesso",
+          "acquirer_return_code": "00",
+          "operation_type": "auth_only",
+          "card": {
+            "id": "card_D5p74jkH15SBYvYq",
+            "first_six_digits": "400000",
+            "last_four_digits": "0010",
+            "brand": "Visa",
+            "holder_name": "Homelander",
+            "exp_month": 12,
+            "exp_year": 2025,
+            "status": "active",
+            "type": "credit",
+            "created_at": "2023-03-03T19:49:14Z",
+            "updated_at": "2023-03-03T19:49:14Z",
+            "billing_address": {
+              "zip_code": "90265",
+              "city": "Malibu",
+              "state": "CA",
+              "country": "US",
+              "line_1": "10880, Malibu Point, Malibu Central"
+            }
+          },
+          "payment_type": "PAN",
+          "created_at": "2023-03-03T19:49:15Z",
+          "updated_at": "2023-03-03T19:49:15Z",
+          "gateway_response": {
+            "code": "200",
+            "errors": []
+          },
+          "antifraud_response": {},
+          "metadata": {}
+        }
+      }
+    ],
+    "checkouts": []
+  }
+}
