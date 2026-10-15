@@ -16,7 +16,7 @@ valor-limite do Pix, CEPs do boleto) e o disparo de webhooks.
 
 | # | Etapa | Status |
 |---|-------|--------|
-| 1 | Fundação do projeto | ⬜ |
+| 1 | Fundação do projeto | 🟨 aguardando aprovação |
 | 2 | Clientes, endereços e cartões | ⬜ |
 | 3 | Webhooks | ⬜ |
 | 4 | Pedidos com cartão de crédito | ⬜ |
@@ -38,7 +38,7 @@ Legenda: ⬜ não iniciada · 🟨 em andamento · ✅ concluída (aprovada pelo
 - **Base path:** `/core/v5`, igual à API real. Para usar o simulador, o cliente só troca o host.
 - **Endpoints de controle** (não existem na Pagar.me) ficam fora do base path, em `/_simulator/...`.
 - **Validação:** feita com Zod, sem usar os schemas do OpenAPI. Os erros saem no formato da Pagar.me:
-  `{"message": "The request is invalid.", "errors": {"<caminho>": ["<mensagem>"]}}`.
+  `{"message": "The request is invalid.", "errors": {"<caminho>": ["<mensagem>"]}, "request": <corpo enviado>}`.
 - **Persistência:** em memória por padrão, atrás de uma interface de repositório, para permitir trocar por SQLite depois.
 - **Formatos:** IDs com prefixo e 16 caracteres (`or_`, `ch_`, `tran_`, `cus_`, `card_`, `addr_`, `oi_`, `hook_`, `token_`);
   datas no formato `2017-04-19T16:01:09Z` (sem milissegundos); valores sempre em centavos (inteiros).
@@ -53,19 +53,19 @@ Legenda: ⬜ não iniciada · 🟨 em andamento · ✅ concluída (aprovada pelo
 **Objetivo:** ter um servidor Fastify em TypeScript com autenticação, formato de erro, IDs, armazenamento
 e paginação iguais aos da Pagar.me, para que as etapas seguintes só precisem adicionar recursos.
 
-- [ ] Inicializar o projeto: `package.json`, `tsconfig` (strict), ESLint + Prettier, Vitest, `tsx` para desenvolvimento
-- [ ] Inicializar o repositório git e criar o `.gitignore`
-- [ ] Estrutura de pastas (`src/app`, `src/modules/<recurso>`, `src/shared`, `src/simulator`, `test/`)
-- [ ] Configuração por variáveis de ambiente, validada com Zod (porta, chaves aceitas, conta `acc_`/nome, atrasos)
-- [ ] Autenticação Basic com secret key (`sk_test_*` / `sk_*`, senha vazia) e resposta `401` no formato oficial
-- [ ] Error handler único: `401`, `404` (`{"message": "<Recurso> not found."}`), `422` no formato oficial, `500`
-- [ ] Conversor de erros do Zod para o mapa `errors` da Pagar.me (caminhos como `order.customer.name`, `order.payments[0]...`)
-- [ ] Gerador de IDs com prefixo e utilitário de datas no formato da Pagar.me
-- [ ] Repositório em memória genérico, com interface para permitir outra implementação
-- [ ] Paginação `page`/`size` com resposta `{"data": [...], "paging": {"total", "previous", "next"}}`
-- [ ] `GET /_simulator/health` e `POST /_simulator/reset` (limpa todos os dados)
-- [ ] Helper de teste de contrato: carrega exemplos do `openapi.json` e compara a estrutura com a resposta do simulador
-- [ ] Testes da etapa passando
+- [x] Inicializar o projeto: `package.json`, `tsconfig` (strict), ESLint + Prettier, Vitest, `tsx` para desenvolvimento
+- [x] Inicializar o repositório git e criar o `.gitignore`
+- [x] Estrutura de pastas (`src/app.ts`, `src/plugins`, `src/shared`, `src/simulator`, `test/`; `src/modules/<recurso>` nasce na Etapa 2)
+- [x] Configuração por variáveis de ambiente, validada com Zod (porta, chaves aceitas, conta `acc_`/nome, atrasos)
+- [x] Autenticação Basic com secret key (`sk_test_*` / `sk_*`, senha vazia) e resposta `401` no formato oficial
+- [x] Error handler único: `401`, `404` (`{"message": "<Recurso> not found."}`), `412`, `422` no formato oficial, `500`
+- [x] Conversor de erros do Zod para o mapa `errors` da Pagar.me (caminhos como `order.customer.name`, `order.payments[0]...`)
+- [x] Gerador de IDs com prefixo e utilitário de datas no formato da Pagar.me
+- [x] Repositório em memória genérico, com interface para permitir outra implementação
+- [x] Paginação `page`/`size` com resposta `{"data": [...], "paging": {"total", "previous", "next"}}`
+- [x] `GET /_simulator/health` e `POST /_simulator/reset` (limpa todos os dados)
+- [x] Helper de teste de contrato: carrega exemplos do `openapi.json` e compara a estrutura com a resposta do simulador
+- [x] Testes da etapa passando (49 testes; `npm run check` = typecheck + lint + format + testes)
 
 **Pronto quando:** o servidor sobe, recusa requisições sem chave com o `401` oficial, devolve `422` no formato
 da Pagar.me e os testes passam.
