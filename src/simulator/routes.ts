@@ -8,6 +8,7 @@ export function simulatorRoutes(app: FastifyInstance, ctx: AppContext): void {
 
   /** Wipes all data, including webhook endpoints added by API; the ones from the configuration remain. */
   app.post('/reset', (_request, reply) => {
+    ctx.scheduler.cancelAll();
     ctx.webhooks.cancelRetries();
     ctx.store.reset();
     return reply.status(204).send();

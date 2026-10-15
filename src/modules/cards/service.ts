@@ -2,14 +2,27 @@ import type { AppContext } from '../../context.js';
 import { formatDate } from '../../shared/clock.js';
 import { NotFoundError, PreconditionFailedError, ValidationError } from '../../shared/errors.js';
 import { generateId } from '../../shared/ids.js';
-import { compact } from '../../shared/schemas.js';
+import { compact, type Metadata } from '../../shared/schemas.js';
 import type { Repository } from '../../shared/store/repository.js';
 import { AddressesService } from '../addresses/service.js';
 import { CustomersService } from '../customers/service.js';
 import { TokensService } from '../tokens/service.js';
-import { NUMBER_INVALID, detectBrand, fullYear, normalizeBrand } from './card-number.js';
+import { NUMBER_INVALID, detectBrand, fullYear, normalizeBrand, type CardBrand } from './card-number.js';
 import { cardView, type BillingAddress, type Card } from './card.js';
 import type { BillingAddressInput, CardCreateInput, CardUpdateInput } from './schemas.js';
+
+export interface NewCard {
+  number: string;
+  brand: CardBrand;
+  holder_name: string;
+  holder_document?: string;
+  exp_month: number;
+  /** yy or yyyy */
+  exp_year: number;
+  label?: string;
+  billing_address?: BillingAddress;
+  metadata?: Metadata;
+}
 
 export class CardsService {
   private readonly cards: Repository<Card>;
@@ -34,31 +47,51 @@ export class CardsService {
       throw new ValidationError({ 'card.number': [NUMBER_INVALID] }, body);
     }
 
+    const card = this.insert(customer.id, {
+      number,
+      brand,
+      holder_name,
+      holder_document: data.holder_document,
+      exp_month,
+      exp_year,
+      label: input.label ?? data.label,
+      billing_address: this.billingAddress(customer.id, input.billing_address_id, input.billing_address),
+      metadata: input.metadata,
+    });
+    const view = this.view(card);
+    this.ctx.events.emit('card.created', view);
+    return view;
+  }
+
+  /** Stores a card in the customer's wallet without emitting events (also used by payments with `card`). */
+  insert(customerId: string, data: NewCard): Card {
     const now = formatDate(this.ctx.clock.now());
-    const card = this.cards.insert(
+    return this.cards.insert(
       compact({
         id: generateId('card'),
-        customer_id: customer.id,
-        number,
-        first_six_digits: number.slice(0, 6),
-        last_four_digits: number.slice(-4),
-        brand,
-        holder_name,
+        customer_id: customerId,
+        number: data.number,
+        first_six_digits: data.number.slice(0, 6),
+        last_four_digits: data.number.slice(-4),
+        brand: data.brand,
+        holder_name: data.holder_name,
         holder_document: data.holder_document,
-        exp_month,
-        exp_year: fullYear(exp_year),
+        exp_month: data.exp_month,
+        exp_year: fullYear(data.exp_year),
         status: 'active' as const,
         type: 'credit' as const,
-        label: input.label ?? data.label,
-        billing_address: this.billingAddress(customer.id, input.billing_address_id, input.billing_address),
-        metadata: input.metadata,
+        label: data.label,
+        billing_address: data.billing_address,
+        metadata: data.metadata,
         created_at: now,
         updated_at: now,
       }),
     );
-    const view = this.view(card);
-    this.ctx.events.emit('card.created', view);
-    return view;
+  }
+
+  /** Card by id, any customer. */
+  findById(cardId: string): Card | undefined {
+    return this.cards.findById(cardId);
   }
 
   /** Card of the customer (any status); 404 "Customer not found." / "Card not found.". */
@@ -131,7 +164,7 @@ export class CardsService {
   }
 
   /** `billing_address_id` copies an address of the customer's wallet; otherwise the address sent is used. */
-  private billingAddress(
+  billingAddress(
     customerId: string,
     addressId: string | undefined,
     address: BillingAddressInput | undefined,

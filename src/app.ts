@@ -4,6 +4,8 @@ import type { AppContext, BaseContext, CoreModule } from './context.js';
 import { addressesModule } from './modules/addresses/routes.js';
 import { binRoutes } from './modules/bin/routes.js';
 import { cardsModule } from './modules/cards/routes.js';
+import { chargesModule } from './modules/charges/routes.js';
+import { ordersModule } from './modules/orders/routes.js';
 import { customersModule } from './modules/customers/routes.js';
 import { tokensModule } from './modules/tokens/routes.js';
 import { WebhookDispatcher } from './modules/webhooks/dispatcher.js';
@@ -12,6 +14,7 @@ import { secretKeyAuth } from './plugins/auth.js';
 import { registerErrorHandling } from './plugins/error-handler.js';
 import { systemClock, type Clock } from './shared/clock.js';
 import { EventBus } from './shared/events.js';
+import { Scheduler } from './shared/scheduler.js';
 import { Store } from './shared/store/store.js';
 import { simulatorRoutes } from './simulator/routes.js';
 
@@ -25,6 +28,8 @@ export const coreModules: CoreModule[] = [
   cardsModule,
   tokensModule,
   webhooksModule,
+  ordersModule,
+  chargesModule,
 ];
 
 export interface BuildAppOptions {
@@ -32,6 +37,7 @@ export interface BuildAppOptions {
   clock?: Clock;
   store?: Store;
   events?: EventBus;
+  scheduler?: Scheduler;
   modules?: CoreModule[];
 }
 
@@ -46,12 +52,18 @@ export async function buildApp(options: BuildAppOptions): Promise<FastifyInstanc
     clock: options.clock ?? systemClock,
     store: options.store ?? new Store(),
     events: options.events ?? new EventBus(),
+    scheduler:
+      options.scheduler ??
+      new Scheduler(config.asyncDelayMs, (error, label) => {
+        app.log.error({ err: error, task: label }, 'scheduled transition failed');
+      }),
   };
   const ctx: AppContext = { ...base, webhooks: new WebhookDispatcher(base, app.log) };
   ctx.events.subscribe((event) => {
     ctx.webhooks.handle(event);
   });
   app.addHook('onClose', () => {
+    ctx.scheduler.cancelAll();
     ctx.webhooks.cancelRetries();
   });
 

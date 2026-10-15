@@ -76,7 +76,22 @@ export type EventType =
   | 'address.deleted'
   | 'card.created'
   | 'card.updated'
-  | 'card.deleted';
+  | 'card.deleted'
+  | 'order.created'
+  | 'order.paid'
+  | 'order.payment_failed'
+  | 'order.canceled'
+  | 'order.closed'
+  | 'order_item.created'
+  | 'order_item.updated'
+  | 'order_item.deleted'
+  | 'charge.created'
+  | 'charge.paid'
+  | 'charge.payment_failed'
+  | 'charge.pending'
+  | 'charge.processing'
+  | 'charge.refunded'
+  | 'charge.chargedback';
 
 export interface DomainEvent {
   type: EventType;

@@ -18,8 +18,8 @@ valor-limite do Pix, CEPs do boleto) e o disparo de webhooks.
 |---|-------|--------|
 | 1 | Fundação do projeto | ✅ |
 | 2 | Clientes, endereços e cartões | ✅ |
-| 3 | Webhooks | 🟨 aguardando aprovação |
-| 4 | Pedidos com cartão de crédito | ⬜ |
+| 3 | Webhooks | ✅ |
+| 4 | Pedidos com cartão de crédito | 🟨 aguardando aprovação |
 | 5 | Pix e boleto | ⬜ |
 | 6 | Operações de cobrança | ⬜ |
 | 7 | Controle do simulador e cenários assíncronos | ⬜ |
@@ -116,22 +116,24 @@ estrutura dos exemplos oficiais.
 
 **Objetivo:** implementar o núcleo do fluxo de pagamento: pedido, cobrança e transação, seguindo o simulador oficial de cartão.
 
-- [ ] `POST /orders` com `customer` ou `customer_id`, `items`, `shipping`, `metadata`, `code`, `closed`, `payments`
-- [ ] Cartão por `card` (dados abertos), `card_id` ou `card_token`; `installments`, `statement_descriptor`, `capture`
-- [ ] Máquina de estados: pedido (`pending`, `paid`, `canceled`, `failed`), cobrança (`pending`, `paid`, `canceled`,
+- [x] `POST /orders` com `customer` ou `customer_id`, `items`, `shipping`, `metadata`, `code`, `closed`, `payments`
+- [x] Cartão por `card` (dados abertos), `card_id` ou `card_token`; `installments`, `statement_descriptor`, `capture`
+- [x] Máquina de estados: pedido (`pending`, `paid`, `canceled`, `failed`), cobrança (`pending`, `paid`, `canceled`,
       `processing`, `failed`, `overpaid`, `underpaid`, `chargedback`) e `last_transaction`, conforme a documentação
-- [ ] Cartões do simulador oficial: `4000000000000010` (sucesso), `…0028` (falha), `…0036` (processing → pago),
+- [x] Cartões do simulador oficial: `4000000000000010` (sucesso), `…0028` (falha), `…0036` (processing → pago),
       `…0044` (processing → falha), `…0077`, `…0093`, `…0051`, `…0069` (pago → chargeback); qualquer outro: não autorizado
-- [ ] `capture: false` → autorizado aguardando captura
-- [ ] Campos da transação no formato oficial (`acquirer_name: "simulator"`, `acquirer_*`, `gateway_response`, `antifraud_response`, `card`)
-- [ ] Vários pagamentos no mesmo pedido (multimeios), com o pedido pago só quando todas as cobranças estiverem pagas
-- [ ] `GET /orders` (com filtros), `GET /orders/{id}`, `PATCH /orders/{id}/closed`
-- [ ] Itens do pedido: incluir, obter, editar, excluir e excluir todos em `/orders/{id}/items`
-- [ ] `POST /charges` com `order_id` (incluir cobrança em pedido aberto)
-- [ ] Webhooks: `order.created`, `order.paid`, `order.payment_failed`, `order.closed`, `order.updated`, `order_item.*`,
+      (o comportamento de `…0077` e `…0093` no cancelamento entra na Etapa 6)
+- [x] `capture: false` → autorizado aguardando captura (também `operation_type: auth_only`)
+- [x] Campos da transação no formato oficial (`acquirer_name: "simulator"`, `acquirer_*`, `gateway_response`, `antifraud_response`, `card`)
+- [x] Vários pagamentos no mesmo pedido (multimeios), com o pedido pago só quando todas as cobranças estiverem pagas
+- [x] `GET /orders` (com filtros), `GET /orders/{id}`, `PATCH /orders/{id}/closed`
+- [x] Itens do pedido: incluir, obter, editar, excluir e excluir todos em `/orders/{id}/items`
+- [x] `POST /charges` com `order_id` (incluir cobrança em pedido aberto)
+- [x] Webhooks: `order.created`, `order.paid`, `order.payment_failed`, `order.closed`, `order_item.*`,
       `charge.created`, `charge.paid`, `charge.payment_failed`, `charge.pending`, `charge.processing`
-- [ ] As transições posteriores (`…0036`, `…0044`, `…0051`, `…0069`) já ficam agendadas, com atraso configurável
-- [ ] Testes de contrato e um teste para cada cartão do simulador, incluindo a sequência de webhooks
+      (`order.updated` não é emitido: a documentação não diz quando ele ocorre)
+- [x] As transições posteriores (`…0036`, `…0044`, `…0051`, `…0069`) já ficam agendadas, com atraso configurável
+- [x] Testes de contrato e um teste para cada cartão do simulador, incluindo a sequência de webhooks (192 testes no total)
 
 **Pronto quando:** cada cartão de teste gera os mesmos status e a mesma sequência de webhooks descritos no simulador oficial.
 

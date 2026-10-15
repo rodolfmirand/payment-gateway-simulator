@@ -1,4 +1,4 @@
-import { getRandomValues } from 'node:crypto';
+import { getRandomValues, randomInt } from 'node:crypto';
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 const ID_LENGTH = 16;
@@ -31,6 +31,18 @@ export function randomString(length: number): string {
     }
   }
   return out;
+}
+
+/** Order code generated when the merchant sends none, e.g. "62LVFN7I4R". */
+export function randomCode(length = 10): string {
+  return randomString(length * 3)
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, '')
+    .slice(0, length);
+}
+
+export function randomDigits(length: number): string {
+  return Array.from({ length }, () => String(randomInt(10))).join('');
 }
 
 export function generateId(prefix: IdPrefix): string {

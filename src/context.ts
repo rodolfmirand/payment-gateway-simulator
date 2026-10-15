@@ -3,6 +3,7 @@ import type { Config } from './config.js';
 import type { WebhookDispatcher } from './modules/webhooks/dispatcher.js';
 import type { Clock } from './shared/clock.js';
 import type { EventBus } from './shared/events.js';
+import type { Scheduler } from './shared/scheduler.js';
 import type { Store } from './shared/store/store.js';
 
 /** Dependencies that do not depend on anything else. */
@@ -11,6 +12,7 @@ export interface BaseContext {
   clock: Clock;
   store: Store;
   events: EventBus;
+  scheduler: Scheduler;
 }
 
 /** Dependencies shared by every module. */
