@@ -1,8 +1,11 @@
 import { compact, type Metadata } from '../../shared/schemas.js';
 import type { BillingAddress } from '../cards/card.js';
 
-/** docs/pagarme/reference/pedidos-1.md */
-export type OrderStatus = 'pending' | 'paid' | 'canceled' | 'failed';
+/**
+ * docs/pagarme/reference/pedidos-1.md. "processing" is not in that list, but the card simulator guide puts the
+ * order in it while a cancellation of cards …0077 and …0093 is being processed.
+ */
+export type OrderStatus = 'pending' | 'paid' | 'canceled' | 'failed' | 'processing';
 
 /** docs/pagarme/reference/item-do-pedido-1.md */
 export interface OrderItem {

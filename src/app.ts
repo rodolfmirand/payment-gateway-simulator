@@ -13,6 +13,7 @@ import { WebhookDispatcher } from './modules/webhooks/dispatcher.js';
 import { webhooksModule } from './modules/webhooks/routes.js';
 import { secretKeyAuth } from './plugins/auth.js';
 import { registerErrorHandling } from './plugins/error-handler.js';
+import { registerJsonBodyParser } from './plugins/json-body.js';
 import { systemClock, type Clock } from './shared/clock.js';
 import { EventBus } from './shared/events.js';
 import { Scheduler } from './shared/scheduler.js';
@@ -70,6 +71,7 @@ export async function buildApp(options: BuildAppOptions): Promise<FastifyInstanc
   });
 
   registerErrorHandling(app);
+  registerJsonBodyParser(app);
 
   await app.register(
     (instance) => {

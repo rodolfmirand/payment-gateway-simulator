@@ -92,6 +92,32 @@ export function initialOutcome(scenario: CardScenario, operation: OperationType)
   }
 }
 
+/**
+ * Cards …0077 and …0093 on cancel: "ao tentar cancelar essa transação ela ficará com o status Com erro e tanto a
+ * cobrança quanto o pedido ficarão como Processando". Returns undefined for cards cancelled right away.
+ */
+export function cancelOutcomes(scenario: CardScenario): { now: Outcome; later: Outcome } | undefined {
+  const processing = WITH_ERROR('processing');
+  if (scenario === 'cancel_processing_then_canceled') {
+    return {
+      now: processing,
+      later: {
+        transaction: 'refunded',
+        charge: 'canceled',
+        success: true,
+        message: 'Transação cancelada com sucesso',
+        returnCode: '00',
+        authorized: false,
+      },
+    };
+  }
+  if (scenario === 'cancel_processing_then_paid') {
+    // "Por fim, os status do pedido e da cobrança serão atualizados novamente para Pago e o da transação para Capturado."
+    return { now: processing, later: CAPTURED };
+  }
+  return undefined;
+}
+
 /** Status set later by the acquirer, or undefined when nothing else happens on its own. */
 export function laterOutcome(scenario: CardScenario, operation: OperationType): Outcome | undefined {
   switch (scenario) {

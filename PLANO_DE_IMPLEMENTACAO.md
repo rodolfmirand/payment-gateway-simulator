@@ -20,8 +20,8 @@ valor-limite do Pix, CEPs do boleto) e o disparo de webhooks.
 | 2 | Clientes, endereços e cartões | ✅ |
 | 3 | Webhooks | ✅ |
 | 4 | Pedidos com cartão de crédito | ✅ |
-| 5 | Pix e boleto | 🟨 aguardando aprovação |
-| 6 | Operações de cobrança | ⬜ |
+| 5 | Pix e boleto | ✅ |
+| 6 | Operações de cobrança | 🟨 aguardando aprovação |
 | 7 | Controle do simulador e cenários assíncronos | ⬜ |
 | 8 | Empacotamento para pipeline e documentação | ⬜ |
 
@@ -165,14 +165,15 @@ produz o desfecho documentado.
 
 **Objetivo:** cobrir as operações de pós-venda sobre cobranças.
 
-- [ ] `GET /charges` (com filtros) e `GET /charges/{id}`
-- [ ] `POST /charges/{id}/capture` (total e parcial)
-- [ ] `DELETE /charges/{id}`: cancelamento/estorno total e parcial (`charge.refunded`, `charge.partial_canceled`, `order.canceled`)
-- [ ] Comportamento de cancelamento dos cartões `…0077` (processing → cancelado/estornado) e `…0093` (processing → volta a pago)
-- [ ] `POST /charges/{id}/retry` (retentar manualmente)
-- [ ] `PATCH /charges/{id}/card`, `PATCH /charges/{id}/due-date`, `PATCH /charges/{id}/payment-method`
-- [ ] Erros de operação inválida no formato oficial (ex.: capturar uma cobrança já paga)
-- [ ] Testes de contrato e de transição de estado
+- [x] `GET /charges` (com filtros) e `GET /charges/{id}`
+- [x] `POST /charges/{id}/capture` (total e parcial)
+- [x] `DELETE /charges/{id}`: cancelamento/estorno total e parcial (`charge.refunded`, `charge.partial_canceled`, `order.canceled`),
+      para cartão, Pix e boleto (boleto segue a regra vigente desde 01/10/2026: sem estorno financeiro)
+- [x] Comportamento de cancelamento dos cartões `…0077` (processing → cancelado/estornado) e `…0093` (processing → volta a pago)
+- [x] `POST /charges/{id}/retry` (retentar manualmente)
+- [x] `PATCH /charges/{id}/card`, `PATCH /charges/{id}/due-date`, `PATCH /charges/{id}/payment-method`
+- [x] Erros de operação inválida no formato oficial (ex.: capturar uma cobrança já paga)
+- [x] Testes de contrato e de transição de estado (230 testes no total)
 
 **Pronto quando:** capturar, cancelar e estornar funcionam de forma total e parcial, com os status e os webhooks oficiais.
 

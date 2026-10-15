@@ -93,7 +93,8 @@ export type EventType =
   | 'charge.refunded'
   | 'charge.chargedback'
   | 'charge.underpaid'
-  | 'charge.overpaid';
+  | 'charge.overpaid'
+  | 'charge.partial_canceled';
 
 export interface DomainEvent {
   type: EventType;

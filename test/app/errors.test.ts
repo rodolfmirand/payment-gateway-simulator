@@ -105,6 +105,17 @@ describe('errors not documented by Pagar.me (ASP.NET Web API defaults)', () => {
     expect(res.json()).toEqual({ message: 'The request is invalid.' });
   });
 
+  it('an empty body with Content-Type: application/json is accepted as no body', async () => {
+    const res = await app.inject({
+      method: 'POST',
+      url: '/core/v5/customers',
+      headers: { ...auth, 'content-type': 'application/json' },
+      payload: '',
+    });
+    expect(res.statusCode).toBe(422); // validated as {}, not rejected as malformed
+    expect(res.json().request).toEqual({});
+  });
+
   it('unexpected exception -> 500 without leaking details', async () => {
     const res = await app.inject({ method: 'GET', url: '/core/v5/boom', headers: auth });
     expect(res.statusCode).toBe(500);

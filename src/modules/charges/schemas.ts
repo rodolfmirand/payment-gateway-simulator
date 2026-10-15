@@ -22,7 +22,7 @@ const paymentCardSchema = z.object({
 });
 
 /** `credit_card` of a payment (docs/pagarme/reference/cartao-de-credito-1.md). */
-function creditCardPaymentSchema(now: Date) {
+export function creditCardPaymentSchema(now: Date) {
   return z
     .object({
       installments: optional(integerish(z.number().int().min(1))),
@@ -62,7 +62,7 @@ function creditCardPaymentSchema(now: Date) {
 }
 export type CreditCardPaymentInput = z.output<ReturnType<typeof creditCardPaymentSchema>>;
 
-const dateString = z.string().refine((value) => !Number.isNaN(Date.parse(value)));
+export const dateString = z.string().refine((value) => !Number.isNaN(Date.parse(value)));
 const numberish = z.preprocess(
   (value) =>
     typeof value === 'string' && value.trim() !== '' && !Number.isNaN(Number(value)) ? Number(value) : value,

@@ -28,7 +28,9 @@ import {
 } from './order.js';
 import type { ItemInput, OrderCreateInput } from './schemas.js';
 
-const ORDER_EVENTS: Record<Exclude<OrderStatus, 'pending'>, EventType> = {
+type FinalStatus = Exclude<OrderStatus, 'pending' | 'processing'>;
+
+const ORDER_EVENTS: Record<FinalStatus, EventType> = {
   paid: 'order.paid',
   failed: 'order.payment_failed',
   canceled: 'order.canceled',
@@ -38,7 +40,7 @@ const ORDER_EVENTS: Record<Exclude<OrderStatus, 'pending'>, EventType> = {
  * Order status from its charges (docs/pagarme/guides/multimeios.md): all paid -> paid, all failed -> failed,
  * all canceled -> canceled; otherwise it does not change.
  */
-function statusFromCharges(statuses: ChargeStatus[]): Exclude<OrderStatus, 'pending'> | undefined {
+function statusFromCharges(statuses: ChargeStatus[]): FinalStatus | undefined {
   if (statuses.length === 0) return undefined;
   if (statuses.every((status) => status === 'paid' || status === 'overpaid')) return 'paid';
   if (statuses.every((status) => status === 'failed')) return 'failed';
@@ -108,7 +110,7 @@ export class OrdersService {
     const charges = this.charges();
     const resolved = payments.map((payment, index) => ({
       payment,
-      card: charges.resolveCard(customer.id, payment, `order.payments[${index}]`, body),
+      card: charges.resolveCard(customer.id, payment, `order.payments[${index}].credit_card`, body),
     }));
 
     const now = formatDate(this.ctx.clock.now());
@@ -168,7 +170,7 @@ export class OrdersService {
           ? this.customers.create(input.customer).customer
           : this.customers.get(order.customer_id);
     const charges = this.charges();
-    const card = charges.resolveCard(customer.id, input.payment, 'charge.payment', body);
+    const card = charges.resolveCard(customer.id, input.payment, 'charge.payment.credit_card', body);
     const charge = charges.create({
       customerId: customer.id,
       orderId: order.id,
@@ -188,7 +190,7 @@ export class OrdersService {
   }
 
   /** PATCH /orders/{id}/closed: the status sent is final (docs/pagarme/guides/pedidos-abertos.md). */
-  close(id: string, status: Exclude<OrderStatus, 'pending'>) {
+  close(id: string, status: FinalStatus) {
     const order = this.get(id);
     if (order.closed) throw new PreconditionFailedError('This order is already closed.');
     const now = formatDate(this.ctx.clock.now());
@@ -206,18 +208,33 @@ export class OrdersService {
     return view;
   }
 
-  /** Called when a charge changes later on: closed orders follow their charges, unless closed by hand. */
-  refreshStatus(id: string): void {
+  /**
+   * Called when a charge changes: closed orders follow their charges, unless closed by hand. The new status is
+   * saved right away; the returned function emits the order event, so the caller can emit the charge event first.
+   */
+  refreshStatus(id: string): (() => void) | undefined {
     const order = this.orders.findById(id);
-    if (!order?.closed || order.closed_manually) return;
+    if (!order?.closed || order.closed_manually) return undefined;
     const status = statusFromCharges(
       this.charges()
         .findByIds(order.charge_ids)
         .map((charge) => charge.status),
     );
-    if (!status || status === order.status) return;
+    if (!status || status === order.status) return undefined;
     const updated = this.orders.update({ ...order, status, updated_at: formatDate(this.ctx.clock.now()) });
-    this.ctx.events.emit(ORDER_EVENTS[status], this.view(updated));
+    return () => {
+      this.ctx.events.emit(ORDER_EVENTS[status], this.view(updated));
+    };
+  }
+
+  /**
+   * Cards …0077/…0093: "tanto a cobrança quanto o pedido ficarão como Processando" while the cancellation is
+   * processed (guides/simulador-de-cartao-de-credito.md). refreshStatus moves it on afterwards.
+   */
+  markProcessing(id: string): void {
+    const order = this.orders.findById(id);
+    if (!order?.closed || order.closed_manually) return;
+    this.orders.update({ ...order, status: 'processing', updated_at: formatDate(this.ctx.clock.now()) });
   }
 
   /** Newest first. */

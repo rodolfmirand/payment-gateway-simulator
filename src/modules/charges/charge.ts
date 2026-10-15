@@ -23,7 +23,8 @@ export type CardTransactionStatus =
   | 'chargedback';
 
 /** As in docs/pagarme/reference/pix-2.md: waiting_payment until paid. */
-export type PixTransactionStatus = 'waiting_payment' | 'paid' | 'failed' | 'refunded';
+export type PixTransactionStatus =
+  'waiting_payment' | 'paid' | 'failed' | 'refunded' | 'partial_refunded' | 'voided';
 
 /** As in docs/pagarme/reference/boleto-1.md: generated until conciliated. */
 export type BoletoTransactionStatus = 'generated' | 'paid' | 'underpaid' | 'overpaid' | 'voided' | 'failed';
