@@ -31,6 +31,10 @@ function pagarmeMessage(issue: z.core.$ZodRawIssue, root: string): string {
       return issue.input === undefined || issue.input === null
         ? `The ${field} field is required.`
         : `The ${field} field is invalid.`;
+    case 'invalid_format':
+      return issue.format === 'email'
+        ? `The ${field} field is not a valid e-mail address.`
+        : `The ${field} field is invalid.`;
     case 'invalid_value':
       return `The ${field} field is invalid. Possible values are ${listValues(issue.values)}.`;
     case 'too_small':

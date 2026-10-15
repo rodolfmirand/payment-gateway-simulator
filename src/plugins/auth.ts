@@ -20,6 +20,10 @@ export function isAcceptedKey(key: string, accepted: readonly string[], prefix: 
 /** onRequest hook for the /core/v5 routes authenticated with the secret key. */
 export function secretKeyAuth(config: Pick<Config, 'secretKeys'>): onRequestHookHandler {
   return (request, _reply, done) => {
+    if (request.routeOptions.config.auth === 'none') {
+      done();
+      return;
+    }
     const key = basicAuthUser(request.headers.authorization);
     if (!key || !isAcceptedKey(key, config.secretKeys, 'sk_')) {
       done(new UnauthorizedError());

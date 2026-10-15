@@ -19,6 +19,11 @@ export interface Page<T> {
   paging: Paging;
 }
 
+/** Absolute URL of the request, used to build the paging links. */
+export function requestUrl(request: { protocol: string; host: string; url: string }): URL {
+  return new URL(`${request.protocol}://${request.host}${request.url}`);
+}
+
 function withPage(url: URL, page: number): string {
   const target = new URL(url);
   target.searchParams.set('page', String(page));

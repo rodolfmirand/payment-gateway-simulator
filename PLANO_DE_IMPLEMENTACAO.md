@@ -16,8 +16,8 @@ valor-limite do Pix, CEPs do boleto) e o disparo de webhooks.
 
 | # | Etapa | Status |
 |---|-------|--------|
-| 1 | Fundação do projeto | 🟨 aguardando aprovação |
-| 2 | Clientes, endereços e cartões | ⬜ |
+| 1 | Fundação do projeto | ✅ |
+| 2 | Clientes, endereços e cartões | 🟨 aguardando aprovação |
 | 3 | Webhooks | ⬜ |
 | 4 | Pedidos com cartão de crédito | ⬜ |
 | 5 | Pix e boleto | ⬜ |
@@ -76,15 +76,15 @@ da Pagar.me e os testes passam.
 
 **Objetivo:** implementar a carteira de clientes, que é pré-requisito dos pedidos.
 
-- [ ] Clientes: `POST /customers`, `GET /customers`, `GET /customers/{id}`, `PUT /customers/{id}`
-- [ ] Endereços: criar, listar, obter, editar e excluir em `/customers/{id}/addresses`
-- [ ] Cartões: criar, listar, obter, editar, excluir e renovar em `/customers/{id}/cards`
-- [ ] Validação de cartão: algoritmo de Luhn, tamanho de 13 a 19 dígitos, validade futura (mensagens de erro oficiais)
-- [ ] Detecção de bandeira pelo BIN; `first_six_digits` e `last_four_digits`; nunca devolver o número completo nem o CVV
-- [ ] Tokenização: `POST /tokens?appId=pk_test_*` (autenticação pela chave pública, sem Basic Auth), com expiração do token e CORS
-- [ ] (Opcional) `GET /{bin}` da API de BIN (`bin/v1`)
-- [ ] Emitir eventos de domínio (`customer.*`, `address.*`, `card.*`); o disparo de webhooks fica para a Etapa 3
-- [ ] Testes de contrato contra os exemplos oficiais de cada endpoint
+- [x] Clientes: `POST /customers`, `GET /customers`, `GET /customers/{id}`, `PUT /customers/{id}`
+- [x] Endereços: criar, listar, obter, editar e excluir em `/customers/{id}/addresses`
+- [x] Cartões: criar, listar, obter, editar, excluir e renovar em `/customers/{id}/cards`
+- [x] Validação de cartão: algoritmo de Luhn, tamanho de 13 a 19 dígitos, validade futura (mensagens de erro oficiais)
+- [x] Detecção de bandeira pelo BIN; `first_six_digits` e `last_four_digits`; nunca devolver o número completo nem o CVV
+- [x] Tokenização: `POST /tokens?appId=pk_test_*` (autenticação pela chave pública, sem Basic Auth), com expiração do token e CORS
+- [x] (Opcional) `GET /{bin}` da API de BIN (`bin/v1`)
+- [x] Emitir eventos de domínio (`customer.*`, `address.*`, `card.*`); o disparo de webhooks fica para a Etapa 3
+- [x] Testes de contrato contra os exemplos oficiais de cada endpoint (132 testes no total)
 
 **Pronto quando:** é possível criar um cliente com cartão (direto ou por token) e as respostas têm a mesma
 estrutura dos exemplos oficiais.
