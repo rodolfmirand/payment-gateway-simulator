@@ -31,6 +31,38 @@ export const officialAddressRequest = {
   metadata: { id: 'my_address_id' },
 };
 
+/** "Request Crédito (Basico)" of docs/pagarme/reference/cartao-de-credito-1.md, with the card number as a parameter. */
+export function officialOrderRequest(cardNumber = '4000000000000010') {
+  return {
+    items: [{ amount: 2990, description: 'Chaveiro do Tesseract', quantity: 1 }],
+    customer: { name: 'Tony Stark', email: 'avengerstark@ligadajustica.com.br' },
+    payments: [
+      {
+        payment_method: 'credit_card',
+        credit_card: {
+          recurrence_cycle: 'first',
+          installments: 1,
+          statement_descriptor: 'AVENGERS',
+          card: {
+            number: cardNumber,
+            holder_name: 'Tony Stark',
+            exp_month: 1,
+            exp_year: 30,
+            cvv: '3531',
+            billing_address: {
+              line_1: '10880, Malibu Point, Malibu Central',
+              zip_code: '90265',
+              city: 'Malibu',
+              state: 'CA',
+              country: 'US',
+            },
+          },
+        },
+      },
+    ],
+  };
+}
+
 /** Mastercard of the official card examples. */
 export const officialCardRequest = {
   number: '5425019448107793',
