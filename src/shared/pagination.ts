@@ -19,6 +19,11 @@ export interface Page<T> {
   paging: Paging;
 }
 
+/** Scheme and host the client used to reach the simulator, e.g. http://localhost:4000 */
+export function baseUrl(request: { protocol: string; host: string }): string {
+  return new URL(`${request.protocol}://${request.host}`).origin; // drops default ports (:80, :443)
+}
+
 /** Absolute URL of the request, used to build the paging links. */
 export function requestUrl(request: { protocol: string; host: string; url: string }): URL {
   return new URL(`${request.protocol}://${request.host}${request.url}`);
