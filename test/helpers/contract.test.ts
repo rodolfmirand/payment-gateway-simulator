@@ -26,6 +26,13 @@ describe('compareShape', () => {
     expect(compareShape({ paid_at: null }, { paid_at: '2017-04-19T16:01:11Z' })).toEqual([]);
   });
 
+  it('only checks the type of metadata, whose keys are free-form', () => {
+    expect(compareShape({ metadata: { id: 'x' } }, { metadata: { other: 'y' } })).toEqual([]);
+    expect(compareShape({ metadata: { id: 'x' } }, { metadata: 'x' })).toEqual([
+      '$.metadata: expected object, got string',
+    ]);
+  });
+
   it('reports extra keys only when asked', () => {
     expect(compareShape({ a: 1 }, { a: 1, b: 2 })).toEqual([]);
     expect(compareShape({ a: 1 }, { a: 1, b: 2 }, { reportExtra: true })).toEqual(['extra $.b']);

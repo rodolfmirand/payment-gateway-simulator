@@ -47,9 +47,13 @@ export interface CompareOptions {
   reportExtra?: boolean;
 }
 
+/** Objects whose keys are chosen by the merchant: only their type is compared. */
+const FREE_FORM_KEYS = new Set(['metadata']);
+
 /**
  * Structural comparison: every key of `expected` must exist in `actual` with the same JSON type.
- * Values are not compared. `null` in the example accepts any type; arrays are checked via their first element.
+ * Values are not compared. `null` in the example accepts any type; arrays are checked via their first element;
+ * `metadata` objects are free-form.
  * Returns the list of differences (empty = same shape).
  */
 export function compareShape(
@@ -73,6 +77,7 @@ export function compareShape(
   }
 
   if (expectedType === 'object') {
+    if (FREE_FORM_KEYS.has(path.split('.').at(-1) ?? '')) return [];
     const exp = expected as Record<string, unknown>;
     const act = actual as Record<string, unknown>;
     const diffs = Object.keys(exp).flatMap((key) =>
