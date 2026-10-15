@@ -19,8 +19,8 @@ valor-limite do Pix, CEPs do boleto) e o disparo de webhooks.
 | 1 | Fundação do projeto | ✅ |
 | 2 | Clientes, endereços e cartões | ✅ |
 | 3 | Webhooks | ✅ |
-| 4 | Pedidos com cartão de crédito | 🟨 aguardando aprovação |
-| 5 | Pix e boleto | ⬜ |
+| 4 | Pedidos com cartão de crédito | ✅ |
+| 5 | Pix e boleto | 🟨 aguardando aprovação |
 | 6 | Operações de cobrança | ⬜ |
 | 7 | Controle do simulador e cenários assíncronos | ⬜ |
 | 8 | Empacotamento para pipeline e documentação | ⬜ |
@@ -145,14 +145,15 @@ estrutura dos exemplos oficiais.
 
 **Objetivo:** cobrir os meios de pagamento assíncronos, cujo pagamento chega depois via webhook.
 
-- [ ] Pix: `expires_in`/`expires_at`, `additional_information`; resposta com `qr_code`, `qr_code_url`, `expires_at` e demais campos oficiais
-- [ ] Regra do simulador Pix: valor ≤ R$ 500,00 → `pending` e pago automaticamente após alguns segundos; > R$ 500,00 → `failed`
-- [ ] Boleto: `instructions`, `due_at`, `document_number`, `type`, `interest`/`fine`; resposta com `line`, `barcode`, `pdf`, `url`, `nosso_numero` etc.
-- [ ] Regras do simulador de boleto pelo CEP do comprador: `01046010` (pago a menor → `underpaid`),
+- [x] Pix: `expires_in`/`expires_at`, `additional_information`; resposta com `qr_code`, `qr_code_url`, `expires_at` e demais campos oficiais
+- [x] Regra do simulador Pix: valor ≤ R$ 500,00 → `pending` e pago automaticamente após alguns segundos; > R$ 500,00 → `failed`
+- [x] Boleto: `instructions`, `due_at`, `document_number`, `type`, `interest`/`fine`; resposta com `line`, `barcode`, `pdf`, `url`, `nosso_numero` etc.
+- [x] Regras do simulador de boleto pelo CEP do comprador: `01046010` (pago a menor → `underpaid`),
       `57400000` (pago a maior → `overpaid`), `70070300` (não conciliado), demais (pagamento total)
-- [ ] URLs de QR Code e PDF servidas pelo próprio simulador (conteúdo fictício)
-- [ ] Webhooks `charge.paid`, `charge.underpaid`, `charge.overpaid`, `order.paid` disparados na conciliação
-- [ ] Testes de contrato e de cada cenário do simulador
+- [x] URLs de QR Code e PDF servidas pelo próprio simulador (conteúdo fictício)
+- [x] Webhooks `charge.paid`, `charge.underpaid`, `charge.overpaid`, `order.paid` disparados na conciliação
+- [x] Testes de contrato e de cada cenário do simulador (206 testes no total; exemplos de resposta que só existem no
+      texto das páginas ficam em `test/fixtures/official/`)
 
 **Pronto quando:** um pedido Pix de até R$ 500,00 vira `paid` sozinho e dispara os webhooks, e cada CEP de boleto
 produz o desfecho documentado.

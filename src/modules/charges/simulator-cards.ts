@@ -1,4 +1,4 @@
-import type { ChargeStatus, OperationType, TransactionStatus } from './charge.js';
+import type { CardTransactionStatus, ChargeStatus, OperationType } from './charge.js';
 
 /**
  * Rules of the official credit card simulator (docs/pagarme/guides/simulador-de-cartao-de-credito.md):
@@ -31,7 +31,7 @@ export function scenarioFor(cardNumber: string): CardScenario {
 }
 
 export interface Outcome {
-  transaction: TransactionStatus;
+  transaction: CardTransactionStatus;
   charge: ChargeStatus;
   success: boolean;
   message: string;

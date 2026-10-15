@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { integerish, metadataSchema, optional } from '../../shared/schemas.js';
+import { integerish, metadataSchema, optional, stringish } from '../../shared/schemas.js';
 import { EXPIRATION_INVALID, NUMBER_LENGTH, isExpirationValid, isLuhnValid } from '../cards/card-number.js';
 import { billingAddressSchema, cvvSchema } from '../cards/schemas.js';
 
@@ -62,12 +62,66 @@ function creditCardPaymentSchema(now: Date) {
 }
 export type CreditCardPaymentInput = z.output<ReturnType<typeof creditCardPaymentSchema>>;
 
+const dateString = z.string().refine((value) => !Number.isNaN(Date.parse(value)));
+const numberish = z.preprocess(
+  (value) =>
+    typeof value === 'string' && value.trim() !== '' && !Number.isNaN(Number(value)) ? Number(value) : value,
+  z.number(),
+);
+
+/** `pix` of a payment (docs/pagarme/reference/pix-2.md): expires_in (seconds) or expires_at is mandatory. */
+const pixPaymentSchema = z
+  .object({
+    expires_in: optional(integerish(z.number().int().min(1))),
+    expires_at: optional(dateString),
+    additional_information: optional(z.array(z.object({ name: stringish(), value: stringish() }))),
+  })
+  .superRefine((pix, ctx) => {
+    if (pix.expires_in === undefined && pix.expires_at === undefined) {
+      ctx.addIssue({ code: 'custom', path: ['expires_in'], message: 'The expires_in field is required.' });
+    }
+  });
+export type PixPaymentInput = z.output<typeof pixPaymentSchema>;
+
+const feeSchema = z.object({
+  days: integerish(z.number().int().min(1)),
+  type: z.enum(['flat', 'percentage']),
+  amount: numberish,
+});
+
+/** `boleto` of a payment (docs/pagarme/reference/boleto-1.md). */
+const boletoPaymentSchema = z.object({
+  bank: optional(stringish()),
+  instructions: optional(z.string().max(256)),
+  due_at: optional(dateString),
+  nosso_numero: optional(stringish()),
+  type: optional(z.enum(['DM', 'BDP'])),
+  document_number: optional(stringish(z.string().max(16))),
+  statement_descriptor: optional(z.string().max(13)),
+  interest: optional(feeSchema),
+  fine: optional(feeSchema),
+  discount: optional(
+    z.object({
+      type: z.enum(['flat', 'percentage']),
+      rules: z.array(z.object({ limit_date: dateString, amount: numberish })),
+    }),
+  ),
+  metadata: optional(metadataSchema),
+});
+export type BoletoPaymentInput = z.output<typeof boletoPaymentSchema>;
+
 /** An item of `payments` (docs/pagarme/reference/visao-geral-sobre-pagamento.md). */
 export function paymentSchema(now: Date) {
   return z
     .object({
-      payment_method: z.enum(['credit_card']),
+      // The docs write both "pix" and "Pix".
+      payment_method: z.preprocess(
+        (value) => (typeof value === 'string' ? value.toLowerCase() : value),
+        z.enum(['credit_card', 'pix', 'boleto']),
+      ),
       credit_card: optional(creditCardPaymentSchema(now)),
+      pix: optional(pixPaymentSchema),
+      boleto: optional(boletoPaymentSchema),
       amount: optional(integerish(z.number().int().min(1))),
       metadata: optional(metadataSchema),
     })

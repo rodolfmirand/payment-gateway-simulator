@@ -29,7 +29,13 @@ export const customerInputSchema = z
     code: optional(z.string().max(52)),
     document: optional(z.string().max(50)),
     document_type: optional(z.string()),
-    type: optional(z.enum(['individual', 'company'])),
+    // The official boleto example sends "Individual"; responses always carry it lowercase.
+    type: optional(
+      z.preprocess(
+        (value) => (typeof value === 'string' ? value.toLowerCase() : value),
+        z.enum(['individual', 'company']),
+      ),
+    ),
     gender: optional(z.string()),
     address: optional(addressInputSchema),
     phones: optional(phonesSchema),

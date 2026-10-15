@@ -91,7 +91,9 @@ export type EventType =
   | 'charge.pending'
   | 'charge.processing'
   | 'charge.refunded'
-  | 'charge.chargedback';
+  | 'charge.chargedback'
+  | 'charge.underpaid'
+  | 'charge.overpaid';
 
 export interface DomainEvent {
   type: EventType;

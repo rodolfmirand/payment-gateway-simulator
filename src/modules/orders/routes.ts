@@ -1,5 +1,5 @@
 import type { CoreModule } from '../../context.js';
-import { paginate, requestUrl } from '../../shared/pagination.js';
+import { baseUrl, paginate, requestUrl } from '../../shared/pagination.js';
 import { parseRequest } from '../../shared/validation.js';
 import {
   itemInputSchema,
@@ -19,7 +19,7 @@ export const ordersModule: CoreModule = (app, ctx) => {
 
   app.post('/orders', (request) => {
     const input = parseRequest(orderCreateSchema(ctx.clock.now()), request.body, 'order');
-    return orders.create(input, request.body);
+    return orders.create(input, request.body, baseUrl(request));
   });
 
   app.get('/orders', (request) => {

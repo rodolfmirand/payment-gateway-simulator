@@ -86,8 +86,11 @@ export class OrdersService {
     return order;
   }
 
-  /** POST /orders. Everything is validated before any card is charged. */
-  create(input: OrderCreateInput, body: unknown) {
+  /**
+   * POST /orders. Everything is validated before any card is charged. `baseUrl` is the public URL of the
+   * simulator, used in the Pix QR Code and boleto links.
+   */
+  create(input: OrderCreateInput, body: unknown, baseUrl: string) {
     const payments = input.payments ?? [];
     if (payments.length > 1) {
       const errors: FieldErrors = {};
@@ -137,6 +140,7 @@ export class OrdersService {
         amount: payment.amount ?? amount,
         payment,
         card,
+        baseUrl,
       }),
     );
     const status = closed ? statusFromCharges(created.map((charge) => charge.status)) : undefined;
@@ -154,7 +158,7 @@ export class OrdersService {
   }
 
   /** POST /charges: adds a charge to an open order (docs/pagarme/reference/incluir-cobranca-no-pedido.md). */
-  addCharge(input: ChargeCreateInput, body: unknown) {
+  addCharge(input: ChargeCreateInput, body: unknown, baseUrl: string) {
     const order = this.get(input.order_id);
     if (order.closed) throw new PreconditionFailedError('This order is closed.');
     const customer =
@@ -172,6 +176,7 @@ export class OrdersService {
       amount: input.amount,
       payment: { ...input.payment, metadata: input.metadata ?? input.payment.metadata },
       card,
+      baseUrl,
     });
     this.orders.update({
       ...order,

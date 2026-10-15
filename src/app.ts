@@ -4,6 +4,7 @@ import type { AppContext, BaseContext, CoreModule } from './context.js';
 import { addressesModule } from './modules/addresses/routes.js';
 import { binRoutes } from './modules/bin/routes.js';
 import { cardsModule } from './modules/cards/routes.js';
+import { transactionFilesModule } from './modules/charges/files-routes.js';
 import { chargesModule } from './modules/charges/routes.js';
 import { ordersModule } from './modules/orders/routes.js';
 import { customersModule } from './modules/customers/routes.js';
@@ -30,6 +31,7 @@ export const coreModules: CoreModule[] = [
   webhooksModule,
   ordersModule,
   chargesModule,
+  transactionFilesModule,
 ];
 
 export interface BuildAppOptions {

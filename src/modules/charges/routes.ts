@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { CoreModule } from '../../context.js';
+import { baseUrl } from '../../shared/pagination.js';
 import { integerish, metadataSchema, optional } from '../../shared/schemas.js';
 import { parseRequest } from '../../shared/validation.js';
 import { customerInputSchema } from '../customers/schemas.js';
@@ -25,6 +26,6 @@ export const chargesModule: CoreModule = (app, ctx) => {
 
   app.post('/charges', (request) => {
     const input = parseRequest(chargeCreateSchema(ctx.clock.now()), request.body, 'charge');
-    return orders.addCharge(input, request.body);
+    return orders.addCharge(input, request.body, baseUrl(request));
   });
 };
