@@ -1,5 +1,10 @@
+import { existsSync } from 'node:fs';
 import { buildApp } from './app.js';
 import { loadConfig } from './config.js';
+
+// Optional .env in the working directory; variables already set in the environment take precedence.
+const ENV_FILE = '.env';
+if (existsSync(ENV_FILE)) process.loadEnvFile(ENV_FILE);
 
 const config = loadConfig();
 const app = await buildApp({ config });

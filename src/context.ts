@@ -1,15 +1,21 @@
 import type { FastifyInstance } from 'fastify';
 import type { Config } from './config.js';
+import type { WebhookDispatcher } from './modules/webhooks/dispatcher.js';
 import type { Clock } from './shared/clock.js';
 import type { EventBus } from './shared/events.js';
 import type { Store } from './shared/store/store.js';
 
-/** Dependencies shared by every module. */
-export interface AppContext {
+/** Dependencies that do not depend on anything else. */
+export interface BaseContext {
   config: Config;
   clock: Clock;
   store: Store;
   events: EventBus;
+}
+
+/** Dependencies shared by every module. */
+export interface AppContext extends BaseContext {
+  webhooks: WebhookDispatcher;
 }
 
 /** A group of /core/v5 routes (customers, orders...). Registered behind secret key auth. */

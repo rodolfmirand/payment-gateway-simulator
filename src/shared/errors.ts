@@ -33,6 +33,20 @@ export class PreconditionFailedError extends MessageError {
   readonly statusCode = 412;
 }
 
+/** An error whose body is given as is, e.g. the `400 {}` documented for the /hooks endpoints. */
+export class RawResponseError extends PagarmeError {
+  constructor(
+    readonly statusCode: number,
+    private readonly body: Record<string, unknown>,
+  ) {
+    super(`HTTP ${statusCode}`);
+  }
+
+  toBody(): Record<string, unknown> {
+    return this.body;
+  }
+}
+
 export type FieldErrors = Record<string, string[]>;
 
 /** 422 {"message": "The request is invalid.", "errors": {...}, "request": <body as sent>} */

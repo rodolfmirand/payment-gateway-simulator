@@ -17,8 +17,8 @@ valor-limite do Pix, CEPs do boleto) e o disparo de webhooks.
 | # | Etapa | Status |
 |---|-------|--------|
 | 1 | Fundação do projeto | ✅ |
-| 2 | Clientes, endereços e cartões | 🟨 aguardando aprovação |
-| 3 | Webhooks | ⬜ |
+| 2 | Clientes, endereços e cartões | ✅ |
+| 3 | Webhooks | 🟨 aguardando aprovação |
 | 4 | Pedidos com cartão de crédito | ⬜ |
 | 5 | Pix e boleto | ⬜ |
 | 6 | Operações de cobrança | ⬜ |
@@ -96,16 +96,16 @@ estrutura dos exemplos oficiais.
 
 **Objetivo:** permitir que o sistema sob teste receba webhooks no formato oficial, sem ngrok. É o principal motivo do simulador.
 
-- [ ] Cadastro de endpoints de webhook (na Pagar.me é feito pelo dashboard): via configuração (URL e eventos filtrados)
+- [x] Cadastro de endpoints de webhook (na Pagar.me é feito pelo dashboard): via configuração (URL e eventos filtrados)
       e via `POST/GET/DELETE /_simulator/webhook-endpoints`
-- [ ] Envelope oficial: `{"id": "hook_...", "account": {"id", "name"}, "type", "created_at", "data"}`
-- [ ] Dispatcher assíncrono: `POST` JSON para cada endpoint inscrito no evento, com timeout e retentativas configuráveis
-- [ ] Registro de cada entrega: `status` (`pending`, `sent`, `failed`), `attempts`, `last_attempt`, `response_status`, `response_raw`
-- [ ] `GET /hooks`, `GET /hooks/{hook_id}`, `POST /hooks/{hook_id}/retry`
-- [ ] Ligar os eventos de clientes, endereços e cartões da Etapa 2
-- [ ] (Opcional, não documentado na v5) autenticação Basic nas chamadas de webhook, por configuração
-- [ ] `GET /_simulator/webhook-deliveries` para inspecionar os envios durante os testes
-- [ ] Testes com um receptor HTTP local de verdade (entrega, filtro por evento, retentativa, falha)
+- [x] Envelope oficial: `{"id": "hook_...", "account": {"id", "name"}, "type", "created_at", "data"}`
+- [x] Dispatcher assíncrono: `POST` JSON para cada endpoint inscrito no evento, com timeout e retentativas configuráveis
+- [x] Registro de cada entrega: `status` (`pending`, `sent`, `failed`), `attempts`, `last_attempt`, `response_status`, `response_raw`
+- [x] `GET /hooks`, `GET /hooks/{hook_id}`, `POST /hooks/{hook_id}/retry`
+- [x] Ligar os eventos de clientes, endereços e cartões da Etapa 2
+- [x] (Opcional, não documentado na v5) autenticação Basic nas chamadas de webhook, por configuração (credenciais na URL)
+- [x] `GET /_simulator/webhook-deliveries` para inspecionar os envios durante os testes
+- [x] Testes com um receptor HTTP local de verdade (entrega, filtro por evento, retentativa, falha) — 149 testes no total
 
 **Pronto quando:** criar um cliente dispara `customer.created` para a URL configurada, e a entrega aparece em `GET /hooks`.
 
@@ -185,7 +185,7 @@ produz o desfecho documentado.
 - [ ] `POST /_simulator/charges/{id}/fail`, `.../chargeback`, `.../expire`
 - [ ] `POST /_simulator/scheduler/flush`: executa na hora todas as transições agendadas
 - [ ] Modo `SIMULATOR_AUTO_TRANSITIONS=false`: nada acontece sozinho; tudo é disparado pelos endpoints de controle
-- [ ] `POST /_simulator/webhooks/flush`: espera a fila de webhooks esvaziar (útil antes das asserções)
+- [x] `POST /_simulator/webhooks/flush`: espera a fila de webhooks esvaziar (útil antes das asserções) — adiantado na Etapa 3
 - [ ] Testes de ponta a ponta do fluxo completo (pedido → webhook → consulta)
 
 **Pronto quando:** um teste de integração consegue pagar um Pix, aguardar os webhooks e verificar o resultado

@@ -15,6 +15,8 @@ export const ID_PREFIX = {
   orderItem: 'oi',
   token: 'token',
   transaction: 'tran',
+  /** Simulator only: webhook endpoints are configured in the Pagar.me dashboard, which has no API. */
+  webhookEndpoint: 'we',
 } as const;
 
 export type IdPrefix = (typeof ID_PREFIX)[keyof typeof ID_PREFIX];
