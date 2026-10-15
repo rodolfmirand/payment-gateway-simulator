@@ -1,4 +1,8 @@
-docs/
+# Downloaded docs stay local (scripts/download_docs.sh), except the compiled spec used by the contract tests
+docs/*
+!docs/pagarme/
+docs/pagarme/*
+!docs/pagarme/openapi.json
 node_modules/
 dist/
 coverage/
